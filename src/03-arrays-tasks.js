@@ -526,13 +526,20 @@ function distinct(arr) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  /* return array.reduce((acc, curr) => {
-    return acc.get(keySelector(curr)) ? acc.set(valueSelector(curr))
-      : acc.set(keySelector(curr), valueSelector(curr));
-  }, new Map()); */
+function group(array, keySelector, valueSelector) {
+  const reducedObj = array.reduce((acc, item) => {
+    const k = keySelector(item);
+    const value = valueSelector(item);
+    if (acc[k]) {
+      acc[k].push(value);
+    } else {
+      acc[k] = [];
+      acc[k].push(value);
+    }
+    return acc;
+  }, {});
+  return new Map(Object.entries(reducedObj));
 }
-
 
 /**
  * Projects each element of the specified array to a sequence
@@ -564,10 +571,9 @@ function selectMany(arr, childrenSelector) {
  *   ['one','two','three'], [2]       => 'three'  (arr[2])
  *   [[[ 1, 2, 3]]], [ 0, 0, 1 ]      => 2        (arr[0][0][1])
  */
-function getElementByIndexes(/* arr, indexes */) {
-  /*  let inds = (indexes.map((el) => [el])); */
+function getElementByIndexes(arr, indexes) {
+  return indexes.reduce((acc, item) => acc[item], arr);
 }
-
 /**
  * Swaps the head and tail of the specified array:
  * the head (first half) of array move to the end, the tail (last half) move to the start.
@@ -586,10 +592,13 @@ function getElementByIndexes(/* arr, indexes */) {
  *   [ 1, 2, 3, 4, 5, 6, 7, 8 ]   =>  [ 5, 6, 7, 8, 1, 2, 3, 4 ]
  *
  */
-function swapHeadAndTail(/* arr */) {
-  throw new Error('Not implemented');
+function swapHeadAndTail(arr) {
+  const mid = Math.floor(arr.length / 2);
+  if (arr.length % 2 === 0) {
+    return arr.concat(arr.splice(0, mid));
+  }
+  return (arr.slice(mid + 1)).concat(arr[mid], arr.splice(0, mid));
 }
-
 
 module.exports = {
   findElement,
